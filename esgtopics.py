@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import csv
 
 import glob
 import nltk
@@ -47,6 +48,13 @@ def loadPaths():
 
     return dirFiles
 
+def writeTokensToFile(company, year, tokens, filePath):
+    for token in tokens:
+        row = [company, year, token.token, str(token.count)]
+        with open('tokenCounts.csv', encoding='utf-8', mode='a') as outputCsv:
+            print(f'Output row: {row}')
+            writer = csv.writer(outputCsv)
+            writer.writerows(row) 
 
 ''':returns tokens in first person and present tense only'''
 def lemmatize_stemming(text):
@@ -116,6 +124,7 @@ if __name__ == '__main__':
             logging.debug(f"{company} {year} entry created with {len(topicMap[key])} entries")
             logging.debug(f'Company: {company} Year: {year}\r\n\r\nInserting records to db')
 
-            context.insertTokens(company, year, topics)
+            #context.insertTokens(company, year, topics)
+            writeTokensToFile(company, year, topics, 'tokenCount.csv')
 
     print("Done")
